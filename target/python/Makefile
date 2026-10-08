@@ -2,6 +2,7 @@ VERSION := $(shell cat VERSION)
 
 .PHONY: build
 build:
+	rm -rf dist
 	uv build --out-dir dist
 
 .PHONY: test
