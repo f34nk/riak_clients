@@ -1,6 +1,6 @@
 # riak_clients
 
-Publishable OpenRiak HTTP client libraries for Python, Elixir, and Erlang.
+Publishable [OpenRiak](https://github.com/OpenRiak/) HTTP client libraries for Python, Elixir, and Erlang.
 
 ## Layout
 
