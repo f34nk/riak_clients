@@ -15,7 +15,8 @@ dist: build
 
 .PHONY: pypi/publish-dry-run
 pypi/publish-dry-run: dist
-	uv publish --dry-run dist/*
+	# Placeholder token avoids an interactive username prompt; nothing is uploaded.
+	UV_PUBLISH_TOKEN=dry-run uv publish --dry-run --trusted-publishing never dist/*
 
 .PHONY: pypi/publish
 pypi/publish: dist
