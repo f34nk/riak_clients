@@ -19,9 +19,16 @@ make test
 
 ## Publishing
 
+Dry-run package builds and registry checks without uploading:
+
+```shell
+make publish-dry-run
+```
+
 Push a tag matching `v*` (for example `v0.1.0`). The release workflow
 compares that tag to the previous version tag and publishes only
-targets that changed under `target/<lang>/`.
+targets that changed under `target/<lang>/`. Each publish job runs the
+dry-run target first, then uploads.
 
 Each package uses its own `VERSION`:
 

@@ -18,3 +18,9 @@ dist:
 	$(MAKE) -C target/python dist
 	$(MAKE) -C target/elixir dist
 	$(MAKE) -C target/erlang dist
+
+.PHONY: publish-dry-run
+publish-dry-run:
+	$(MAKE) -C target/python pypi/publish-dry-run
+	$(MAKE) -C target/elixir hex/publish-dry-run
+	$(MAKE) -C target/erlang hex/publish-dry-run

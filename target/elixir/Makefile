@@ -14,6 +14,10 @@ dist:
 	mix deps.get
 	mix hex.build
 
+.PHONY: hex/publish-dry-run
+hex/publish-dry-run: dist
+	mix hex.publish --yes --dry-run
+
 .PHONY: hex/publish
 hex/publish: dist
 	mix hex.publish --yes

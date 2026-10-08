@@ -14,6 +14,10 @@ test:
 dist:
 	rebar3 hex build
 
+.PHONY: hex/publish-dry-run
+hex/publish-dry-run: dist
+	rebar3 hex publish --yes --dry-run
+
 .PHONY: hex/publish
 hex/publish: dist
 	rebar3 hex publish --yes

@@ -61,6 +61,9 @@ jobs:
       - name: Test
         working-directory: target/python
         run: make test
+      - name: Publish dry-run
+        working-directory: target/python
+        run: make pypi/publish-dry-run
       - name: Publish
         working-directory: target/python
         run: make pypi/publish
@@ -83,6 +86,9 @@ jobs:
       - name: Test
         working-directory: target/elixir
         run: make test
+      - name: Publish dry-run
+        working-directory: target/elixir
+        run: make hex/publish-dry-run
       - name: Publish
         working-directory: target/elixir
         env:
@@ -106,6 +112,9 @@ jobs:
       - name: Test
         working-directory: target/erlang
         run: make test
+      - name: Publish dry-run
+        working-directory: target/erlang
+        run: make hex/publish-dry-run
       - name: Publish
         working-directory: target/erlang
         env:

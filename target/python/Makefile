@@ -13,6 +13,10 @@ test:
 .PHONY: dist
 dist: build
 
+.PHONY: pypi/publish-dry-run
+pypi/publish-dry-run: dist
+	uv publish --dry-run dist/*
+
 .PHONY: pypi/publish
 pypi/publish: dist
 	uv publish --trusted-publishing always dist/*
