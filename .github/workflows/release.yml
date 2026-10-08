@@ -1,0 +1,113 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      python: ${{ steps.filter.outputs.python }}
+      elixir: ${{ steps.filter.outputs.elixir }}
+      erlang: ${{ steps.filter.outputs.erlang }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Detect changed targets since previous tag
+        id: filter
+        run: |
+          set -euo pipefail
+          CURRENT="${GITHUB_REF_NAME}"
+          PREV="$(git tag --sort=-version:refname | grep -vxF "${CURRENT}" | head -n 1 || true)"
+
+          check() {
+            local name="$1"
+            local path="$2"
+            if [ -z "${PREV}" ]; then
+              echo "${name}=true" >> "${GITHUB_OUTPUT}"
+              echo "${name}: first tagged release; will publish"
+            elif git diff --quiet "${PREV}" "${CURRENT}" -- "${path}"; then
+              echo "${name}=false" >> "${GITHUB_OUTPUT}"
+              echo "${name}: unchanged since ${PREV}; skip"
+            else
+              echo "${name}=true" >> "${GITHUB_OUTPUT}"
+              echo "${name}: changed since ${PREV}; will publish"
+            fi
+          }
+
+          check python target/python
+          check elixir target/elixir
+          check erlang target/erlang
+
+  publish-python:
+    needs: changes
+    if: needs.changes.outputs.python == 'true'
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Show package version
+        run: echo "Publishing openriak $(cat target/python/VERSION)"
+      - name: Test
+        working-directory: target/python
+        run: make test
+      - name: Publish
+        working-directory: target/python
+        run: make pypi/publish
+
+  publish-elixir:
+    needs: changes
+    if: needs.changes.outputs.elixir == 'true'
+    runs-on: ubuntu-latest
+    environment: hex
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "26"
+          elixir-version: "1.17"
+      - name: Show package version
+        run: echo "Publishing openriak_ex $(cat target/elixir/VERSION)"
+      - name: Test
+        working-directory: target/elixir
+        run: make test
+      - name: Publish
+        working-directory: target/elixir
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+        run: make hex/publish
+
+  publish-erlang:
+    needs: changes
+    if: needs.changes.outputs.erlang == 'true'
+    runs-on: ubuntu-latest
+    environment: hex
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "26"
+      - name: Show package version
+        run: echo "Publishing openriak_erl $(cat target/erlang/VERSION)"
+      - name: Test
+        working-directory: target/erlang
+        run: make test
+      - name: Publish
+        working-directory: target/erlang
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+        run: make hex/publish
