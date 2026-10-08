@@ -1,0 +1,15 @@
+{application, openriak_erl, [
+    {description, "OpenRiak HTTP client"},
+    {vsn, "0.1.0"},
+    {modules, []},
+    {registered, []},
+    {applications, [
+        kernel,
+        stdlib
+    ]},
+    {env, []},
+    {licenses, ["Apache-2.0"]},
+    {links, [
+        {"GitHub", "https://github.com/OpenRiak/riak_clients"}
+    ]}
+]}.
