@@ -20,4 +20,5 @@ pypi/publish-dry-run: dist
 
 .PHONY: pypi/publish
 pypi/publish: dist
-	uv publish --trusted-publishing always dist/*
+	# automatic: OIDC Trusted Publishing in CI; UV_PUBLISH_TOKEN locally
+	uv publish --trusted-publishing automatic dist/*
