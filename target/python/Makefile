@@ -21,3 +21,8 @@ pypi/publish-dry-run: dist
 pypi/publish: dist
 	# automatic: OIDC Trusted Publishing in CI; UV_PUBLISH_TOKEN locally
 	uv publish --trusted-publishing automatic dist/*
+
+.PHONY: clean
+clean:
+	rm -rf dist build *.egg-info .pytest_cache
+	find . -type d -name __pycache__ -exec rm -rf {} +

@@ -21,3 +21,8 @@ hex/publish-dry-run: dist
 .PHONY: hex/publish
 hex/publish: dist
 	mix hex.publish --yes
+
+.PHONY: clean
+clean:
+	mix clean
+	rm -rf _build deps *.tar

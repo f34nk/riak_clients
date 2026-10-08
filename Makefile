@@ -24,3 +24,9 @@ publish-dry-run:
 	$(MAKE) -C target/python pypi/publish-dry-run
 	$(MAKE) -C target/elixir hex/publish-dry-run
 	$(MAKE) -C target/erlang hex/publish-dry-run
+
+.PHONY: clean
+clean:
+	$(MAKE) -C target/python clean
+	$(MAKE) -C target/elixir clean
+	$(MAKE) -C target/erlang clean
