@@ -38,7 +38,7 @@ defmodule OpenriakEx.MixProject do
       name: "openriak_ex",
       licenses: ["Apache-2.0"],
       links: %{
-        "GitHub" => "https://github.com/OpenRiak/riak_clients"
+        "GitHub" => "https://github.com/f34nk/riak_clients"
       },
       files: ~w(lib mix.exs README.md LICENSE VERSION)
     ]
