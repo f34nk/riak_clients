@@ -1,0 +1,7 @@
+%% Dynamically set {vsn, ...} from the package VERSION file.
+Root = filename:dirname(filename:dirname(SCRIPT)),
+{ok, VsnBin} = file:read_file(filename:join(Root, "VERSION")),
+Vsn = string:trim(binary_to_list(VsnBin)),
+[{application, Name, Props0}] = CONFIG,
+Props1 = lists:keystore(vsn, 1, Props0, {vsn, Vsn}),
+[{application, Name, Props1}].
