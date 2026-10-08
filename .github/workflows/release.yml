@@ -75,6 +75,8 @@ jobs:
     environment: hex
     permissions:
       contents: read
+    env:
+      HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
@@ -91,8 +93,6 @@ jobs:
         run: make hex/publish-dry-run
       - name: Publish
         working-directory: target/elixir
-        env:
-          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
         run: make hex/publish
 
   publish-erlang:
@@ -102,11 +102,14 @@ jobs:
     environment: hex
     permissions:
       contents: read
+    env:
+      HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "26"
+          rebar3-version: "3.24"
       - name: Show package version
         run: echo "Publishing openriak_erl $(cat target/erlang/VERSION)"
       - name: Test
@@ -117,6 +120,4 @@ jobs:
         run: make hex/publish-dry-run
       - name: Publish
         working-directory: target/erlang
-        env:
-          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
         run: make hex/publish
