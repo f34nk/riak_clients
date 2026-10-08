@@ -27,3 +27,5 @@ _build/
 .idea/
 .vscode/
 *.tar
+doc/
+**/doc/
