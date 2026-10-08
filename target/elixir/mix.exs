@@ -13,7 +13,7 @@ defmodule OpenriakEx.MixProject do
       package: package(),
       description: "OpenRiak HTTP client",
       name: "openriak_ex",
-      source_url: "https://github.com/OpenRiak/riak_clients",
+      source_url: "https://github.com/f34nk/riak_clients",
       docs: [
         main: "readme",
         extras: ["README.md"]
