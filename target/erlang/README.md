@@ -9,7 +9,7 @@ Erlang client for OpenRiak.
 ```
 
 ```erlang
-Client = 'openriak.openriak_client':new().
+Client = openriak_client:new().
 ```
 
 This package is a placeholder. API surface will grow in later releases.

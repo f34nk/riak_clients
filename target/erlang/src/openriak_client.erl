@@ -1,5 +1,5 @@
 %% @doc Placeholder OpenRiak client. Functionality will be added later.
--module('openriak.openriak_client').
+-module(openriak_client).
 
 -export([new/0, new/1, endpoint/1]).
 
