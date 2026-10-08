@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "openriak"
-version = "0.1.0"
+dynamic = ["version"]
 description = "OpenRiak HTTP client"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -22,9 +22,13 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/OpenRiak/riak_clients"
-Repository = "https://github.com/OpenRiak/riak_clients"
-Changelog = "https://github.com/OpenRiak/riak_clients/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/f34nk/riak_clients"
+Repository = "https://github.com/f34nk/riak_clients"
+Changelog = "https://github.com/f34nk/riak_clients/blob/main/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "VERSION"
+pattern = "(?P<version>\\S+)"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/openriak"]

@@ -2,8 +2,6 @@ VERSION := $(shell cat VERSION)
 
 .PHONY: build
 build:
-	@test "$(VERSION)" = "$$(sed -n 's/^version = \"\(.*\)\"/\1/p' pyproject.toml | head -1)" \
-		|| (echo "VERSION ($(VERSION)) does not match pyproject.toml" && exit 1)
 	uv build --out-dir dist
 
 .PHONY: test
