@@ -29,6 +29,8 @@ defmodule OpenriakEx.MixProject do
 
   defp deps do
     [
+      {:req, "~> 0.5"},
+      {:jason, "~> 1.4"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
