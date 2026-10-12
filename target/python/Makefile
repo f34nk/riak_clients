@@ -11,6 +11,8 @@ CODEGEN_JAR := $(HOME)/.m2/repository/software/amazon/smithy/python/codegen/core
 OPENRIAK_CODEGEN_JAR := $(HOME)/.m2/repository/openriak/openriak-python-codegen/0.1.0/openriak-python-codegen-0.1.0.jar
 CODEGEN_SRCS := $(shell find codegen/src codegen/pom.xml -type f 2>/dev/null)
 JDK21 := $(shell asdf where java openjdk-21 2>/dev/null)
+CLIENT_DIR := generated/client/python-client-codegen
+SYNC_SRC := $(CLIENT_DIR)/src/openriak
 
 .PHONY: install-codegen
 install-codegen: $(CODEGEN_JAR)
@@ -34,14 +36,28 @@ build/smithy: install-codegen install-openriak-codegen
 	JAVA_HOME="$(JDK21)" smithy build 2>build-errors.log || (cat build-errors.log; exit 1)
 	rm -f build-errors.log
 
+.PHONY: sync
+sync: build/smithy
+	@test -d "$(SYNC_SRC)" || { echo "missing $(SYNC_SRC); run make build/smithy"; exit 1; }
+	rm -rf src/openriak
+	mkdir -p src
+	cp -R "$(SYNC_SRC)" src/openriak
+	@printf '%s\n' \
+		'# Synced from Smithy python-client-codegen. Prefer importing from submodules.' \
+		'from .client import OpenRiak' \
+		'from .config import Config' \
+		'' \
+		'__all__ = ["OpenRiak", "Config"]' \
+		> src/openriak/__init__.py
+
 .PHONY: build
-build:
+build: sync
 	rm -rf dist
 	uv build --out-dir dist
 
 .PHONY: test
-test:
-	uv run --with . python -c "from openriak import OpenRiakClient; c = OpenRiakClient(); assert c.endpoint"
+test: sync
+	uv run --with . --with pytest --with pytest-asyncio python -m pytest test/ -q
 
 .PHONY: dist
 dist: build
