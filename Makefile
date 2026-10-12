@@ -1,6 +1,12 @@
 .PHONY: all
 all: build
 
+.PHONY: build/smithy
+build/smithy:
+	$(MAKE) -C target/python build/smithy
+	$(MAKE) -C target/elixir build/smithy
+	$(MAKE) -C target/erlang build/smithy
+
 .PHONY: build
 build:
 	$(MAKE) -C target/python build

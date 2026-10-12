@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "outputDirectory": "generated",
+  "sources": [
+    "../../model/openriak-3.4.smithy"
+  ],
+  "maven": {
+    "dependencies": [
+      "io.github.f34nk.smithy.beam:codegen-erlang:0.3.1",
+      "software.amazon.smithy:smithy-aws-traits:1.54.0",
+      "openriak:openriak-erlang-codegen:0.1.0"
+    ],
+    "repositories": [
+      {
+        "url": "https://repo1.maven.org/maven2"
+      },
+      {
+        "url": "file://${user.home}/.m2/repository"
+      }
+    ]
+  },
+  "plugins": {
+    "erlang-client-codegen": {
+      "service": "openriak.v3_4.api#OpenRiak",
+      "edition": "2026",
+      "protocol": "openriak.v3_4.api#openRiakHttp",
+      "name": "openriak"
+    }
+  }
+}

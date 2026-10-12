@@ -6,6 +6,9 @@
 # Language build outputs
 build/
 **/_build/
+**/codegen/target/
+generated/
+.smithy-python/
 deps/
 .mix/
 .hex/

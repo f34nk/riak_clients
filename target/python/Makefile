@@ -1,5 +1,39 @@
 VERSION := $(shell cat VERSION)
 
+M2_LOCAL := file://$(HOME)/.m2/repository
+MAVEN_CENTRAL := https://repo.maven.apache.org/maven2
+export SMITHY_MAVEN_REPOS := $(M2_LOCAL)|$(MAVEN_CENTRAL)
+
+SMITHY_PYTHON_SRC ?= $(CURDIR)/.smithy-python
+SMITHY_PYTHON_REPO ?= https://github.com/smithy-lang/smithy-python.git
+SMITHY_PYTHON_REF ?= develop
+CODEGEN_JAR := $(HOME)/.m2/repository/software/amazon/smithy/python/codegen/core/0.3.0/core-0.3.0.jar
+OPENRIAK_CODEGEN_JAR := $(HOME)/.m2/repository/openriak/openriak-python-codegen/0.1.0/openriak-python-codegen-0.1.0.jar
+CODEGEN_SRCS := $(shell find codegen/src codegen/pom.xml -type f 2>/dev/null)
+JDK21 := $(shell asdf where java openjdk-21 2>/dev/null)
+
+.PHONY: install-codegen
+install-codegen: $(CODEGEN_JAR)
+
+$(CODEGEN_JAR):
+	@test -d "$(SMITHY_PYTHON_SRC)/codegen" || { \
+		echo "Cloning smithy-python ($(SMITHY_PYTHON_REF))..."; \
+		git clone --depth 1 --branch "$(SMITHY_PYTHON_REF)" "$(SMITHY_PYTHON_REPO)" "$(SMITHY_PYTHON_SRC)"; \
+	}
+	cd "$(SMITHY_PYTHON_SRC)/codegen" && ./gradlew publishToMavenLocal
+
+.PHONY: install-openriak-codegen
+install-openriak-codegen: $(OPENRIAK_CODEGEN_JAR)
+
+$(OPENRIAK_CODEGEN_JAR): $(CODEGEN_SRCS)
+	cd codegen && JAVA_HOME="$(JDK21)" mvn -q install
+
+.PHONY: build/smithy
+build/smithy: install-codegen install-openriak-codegen
+	@test -n "$(JDK21)" || { echo "openjdk-21 not found via asdf"; exit 1; }
+	JAVA_HOME="$(JDK21)" smithy build 2>build-errors.log || (cat build-errors.log; exit 1)
+	rm -f build-errors.log
+
 .PHONY: build
 build:
 	rm -rf dist
@@ -24,5 +58,5 @@ pypi/publish: dist
 
 .PHONY: clean
 clean:
-	rm -rf dist build *.egg-info .pytest_cache
+	rm -rf dist build *.egg-info .pytest_cache generated build-errors.log .smithy-python codegen/target
 	find . -type d -name __pycache__ -exec rm -rf {} +
