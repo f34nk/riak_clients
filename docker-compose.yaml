@@ -1,0 +1,73 @@
+services:
+
+  openriak:
+    build:
+      context: service/openriak
+    ports:
+      - "8098:8098"
+      - "8087:8087"
+    networks:
+      - openriak-net
+    healthcheck:
+      test: ["CMD", "/healthcheck.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 90s
+
+  python-demo:
+    build:
+      context: .
+      dockerfile: service/python-demo/Dockerfile
+    networks:
+      - openriak-net
+    environment:
+      - RIAK_HOST=openriak
+      - RIAK_PORT=8098
+    depends_on:
+      openriak:
+        condition: service_healthy
+
+  elixir-demo:
+    build:
+      context: .
+      dockerfile: service/elixir-demo/Dockerfile
+    networks:
+      - openriak-net
+    environment:
+      - RIAK_HOST=openriak
+      - RIAK_PORT=8098
+    depends_on:
+      openriak:
+        condition: service_healthy
+
+  erlang-demo:
+    build:
+      context: .
+      dockerfile: service/erlang-demo/Dockerfile
+    networks:
+      - openriak-net
+    environment:
+      - RIAK_HOST=openriak
+      - RIAK_PORT=8098
+    depends_on:
+      openriak:
+        condition: service_healthy
+
+  demo-done:
+    image: alpine:3.21
+    networks:
+      - openriak-net
+    depends_on:
+      openriak:
+        condition: service_healthy
+      python-demo:
+        condition: service_completed_successfully
+      elixir-demo:
+        condition: service_completed_successfully
+      erlang-demo:
+        condition: service_completed_successfully
+
+networks:
+  openriak-net:
+    driver: bridge
