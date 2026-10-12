@@ -11,8 +11,15 @@ CODEGEN_JAR := $(HOME)/.m2/repository/software/amazon/smithy/python/codegen/core
 OPENRIAK_CODEGEN_JAR := $(HOME)/.m2/repository/openriak/openriak-python-codegen/0.1.0/openriak-python-codegen-0.1.0.jar
 CODEGEN_SRCS := $(shell find codegen/src codegen/pom.xml -type f 2>/dev/null)
 JDK21 := $(shell asdf where java openjdk-21 2>/dev/null)
+ifeq ($(strip $(JDK21)),)
+JDK21 := $(shell /usr/libexec/java_home -v 21 2>/dev/null)
+endif
+ifeq ($(strip $(JDK21)),)
+JDK21 := $(JAVA_HOME)
+endif
 CLIENT_DIR := generated/client/python-client-codegen
 SYNC_SRC := $(CLIENT_DIR)/src/openriak
+PACKAGE_MARKER := src/openriak/client.py
 
 .PHONY: install-codegen
 install-codegen: $(CODEGEN_JAR)
@@ -28,11 +35,12 @@ $(CODEGEN_JAR):
 install-openriak-codegen: $(OPENRIAK_CODEGEN_JAR)
 
 $(OPENRIAK_CODEGEN_JAR): $(CODEGEN_SRCS)
+	@test -n "$(JDK21)" || { echo "Java 21 required (asdf openjdk-21, JAVA_HOME, or /usr/libexec/java_home -v 21)"; exit 1; }
 	cd codegen && JAVA_HOME="$(JDK21)" mvn -q install
 
 .PHONY: build/smithy
 build/smithy: install-codegen install-openriak-codegen
-	@test -n "$(JDK21)" || { echo "openjdk-21 not found via asdf"; exit 1; }
+	@test -n "$(JDK21)" || { echo "Java 21 required (asdf openjdk-21, JAVA_HOME, or /usr/libexec/java_home -v 21)"; exit 1; }
 	JAVA_HOME="$(JDK21)" smithy build 2>build-errors.log || (cat build-errors.log; exit 1)
 	rm -f build-errors.log
 
@@ -50,17 +58,23 @@ sync: build/smithy
 		'__all__ = ["OpenRiak", "Config"]' \
 		> src/openriak/__init__.py
 
+.PHONY: compile
+compile:
+	@test -f "$(PACKAGE_MARKER)" || { echo "missing $(PACKAGE_MARKER); run make sync"; exit 1; }
+
 .PHONY: build
 build: sync
 	rm -rf dist
 	uv build --out-dir dist
 
 .PHONY: test
-test: sync
+test: compile
 	uv run --with . --with pytest --with pytest-asyncio python -m pytest test/ -q
 
 .PHONY: dist
-dist: build
+dist: compile
+	rm -rf dist
+	uv build --out-dir dist
 
 .PHONY: pypi/publish-dry-run
 pypi/publish-dry-run: dist

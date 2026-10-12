@@ -7,11 +7,18 @@ export SMITHY_MAVEN_REPOS := $(M2_LOCAL)|$(MAVEN_CENTRAL)
 OPENRIAK_CODEGEN_JAR := $(HOME)/.m2/repository/openriak/openriak-elixir-codegen/0.1.0/openriak-elixir-codegen-0.1.0.jar
 OPENRIAK_CODEGEN_SRCS := $(shell find codegen/src codegen/pom.xml -type f 2>/dev/null)
 JDK21 := $(shell asdf where java openjdk-21 2>/dev/null)
+ifeq ($(strip $(JDK21)),)
+JDK21 := $(shell /usr/libexec/java_home -v 21 2>/dev/null)
+endif
+ifeq ($(strip $(JDK21)),)
+JDK21 := $(JAVA_HOME)
+endif
 CODEGEN_DIR := generated/source/elixir-client-codegen
+PACKAGE_MARKER := lib/open_riak_client.ex
 
 .PHONY: build/smithy
 build/smithy: install-openriak-codegen
-	@test -n "$(JDK21)" || { echo "openjdk-21 not found via asdf"; exit 1; }
+	@test -n "$(JDK21)" || { echo "Java 21 required (asdf openjdk-21, JAVA_HOME, or /usr/libexec/java_home -v 21)"; exit 1; }
 	JAVA_HOME="$(JDK21)" smithy build 2>build-errors.log || (cat build-errors.log; exit 1)
 	rm -f build-errors.log
 
@@ -19,6 +26,7 @@ build/smithy: install-openriak-codegen
 install-openriak-codegen: $(OPENRIAK_CODEGEN_JAR)
 
 $(OPENRIAK_CODEGEN_JAR): $(OPENRIAK_CODEGEN_SRCS)
+	@test -n "$(JDK21)" || { echo "Java 21 required (asdf openjdk-21, JAVA_HOME, or /usr/libexec/java_home -v 21)"; exit 1; }
 	cd codegen && JAVA_HOME="$(JDK21)" mvn -q install
 
 .PHONY: sync
@@ -28,17 +36,21 @@ sync: build/smithy
 	rm -f lib/*.ex
 	cp "$(CODEGEN_DIR)"/*.ex lib/
 
-.PHONY: build
-build: sync
+.PHONY: compile
+compile:
+	@test -f "$(PACKAGE_MARKER)" || { echo "missing $(PACKAGE_MARKER); run make sync"; exit 1; }
 	mix deps.get
 	mix compile
 
+.PHONY: build
+build: sync compile
+
 .PHONY: test
-test: build
+test: compile
 	MIX_ENV=test mix test
 
 .PHONY: dist
-dist: build
+dist: compile
 	mix hex.build
 
 .PHONY: hex/publish-dry-run
