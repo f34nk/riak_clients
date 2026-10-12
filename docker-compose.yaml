@@ -1,6 +1,7 @@
 services:
 
   openriak:
+    image: riak_clients-openriak:demo
     build:
       context: service/openriak
     ports:

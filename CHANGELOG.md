@@ -7,6 +7,11 @@ All notable changes to this project will be documented here.
 ### Added
 
 - Release workflow runs `make demo` after publish jobs, including when some publishes were skipped.
+- Release demo job caches the OpenRiak Docker image via Buildx and GitHub Actions cache.
+
+### Changed
+
+- `make demo` streams Compose build output, reuses an existing OpenRiak image when present, and no longer deletes that image between runs.
 
 ## 2026-10-12
 

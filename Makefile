@@ -56,11 +56,20 @@ demo:
 	fi;
 
 .PHONY: docker/up
-docker/up: docker/down
+docker/up:
 	#
 	# Docker/up
 	#
-	docker compose up --build -d > compose.log 2>&1
+	docker compose down -v
+	bash -ec 'set -o pipefail; \
+		if docker image inspect riak_clients-openriak:demo >/dev/null 2>&1; then \
+			echo "Using existing riak_clients-openriak:demo image" | tee compose.log; \
+		else \
+			echo "Building riak_clients-openriak:demo (this can take several minutes)" | tee compose.log; \
+			DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain docker compose build openriak 2>&1 | tee -a compose.log; \
+		fi; \
+		DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain docker compose build python-demo elixir-demo erlang-demo 2>&1 | tee -a compose.log; \
+		docker compose up -d --no-build 2>&1 | tee -a compose.log'
 	i=0; \
 	while [ $$i -lt 180 ]; do \
 		state=$$(docker compose ps -a --format '{{.State}}' demo-done 2>/dev/null | head -1); \
@@ -83,7 +92,7 @@ docker/up: docker/down
 		exit 1; \
 	fi
 	make docker/logs
-	make docker/down > /dev/null 2>&1
+	docker compose down -v > /dev/null 2>&1
 	echo "All demos finished" >> $(BUILD_LOGS)
 
 .PHONY: docker/down
