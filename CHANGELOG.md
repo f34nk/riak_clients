@@ -4,6 +4,10 @@ All notable changes to this project will be documented here.
 
 ## [Unreleased]
 
+### Added
+
+- Release workflow runs `make demo` after publish jobs, including when some publishes were skipped.
+
 ## 2026-10-12
 
 ### Added
@@ -19,10 +23,12 @@ All notable changes to this project will be documented here.
 - Packages ship generated OpenRiak HTTP clients instead of placeholders.
 - Package versions: Python and Elixir `0.1.3`, Erlang `0.1.4`.
 - `make test` and package publish targets use already-synced sources and no longer require Smithy or Java 21 in CI.
+- Released tags `v0.2.0` and `v0.2.1` covering Smithy-generated clients, Docker demos, and publish CI fixes.
 
 ### Fixed
 
 - Release CI no longer fails while regenerating clients during publish test jobs.
+
 
 ## 2026-10-08
 
