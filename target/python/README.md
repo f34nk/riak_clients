@@ -13,3 +13,5 @@ client = OpenRiak(Config(endpoint_uri="http://127.0.0.1:8098"))
 ```
 
 `OpenRiak` is an async client. Construct it inside a running event loop (or pass a custom transport) before calling operations. See `openriak.client` and `openriak.models` for the full API.
+
+Please checkout the [demos](https://github.com/f34nk/riak_clients/tree/first-draft/service).

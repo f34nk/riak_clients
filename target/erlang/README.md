@@ -14,3 +14,5 @@ Config = #{base_url => "http://127.0.0.1:8098"},
 ```
 
 Operation functions take a config map and an input map or record. See `openriak_client` and `openriak_types.hrl` for the full API.
+
+Please checkout the [demos](https://github.com/f34nk/riak_clients/tree/first-draft/service).
