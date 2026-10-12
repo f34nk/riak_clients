@@ -121,3 +121,13 @@ jobs:
       - name: Publish
         working-directory: target/erlang
         run: make hex/publish
+
+  demo:
+    needs: [publish-python, publish-elixir, publish-erlang]
+    if: ${{ always() && !cancelled() && !failure() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run demos
+        run: make demo
