@@ -5,7 +5,9 @@
     {registered, []},
     {applications, [
         kernel,
-        stdlib
+        stdlib,
+        inets,
+        jsone
     ]},
     {env, []},
     {licenses, ["Apache-2.0"]},
