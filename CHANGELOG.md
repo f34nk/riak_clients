@@ -4,9 +4,18 @@ All notable changes to this project will be documented here.
 
 ## [Unreleased]
 
+## 2026-10-12
+
 ### Added
 
-- make clean target to remove build artifacts across all client packages.
+- Smithy model and per-language codegen plugins for Python, Elixir, and Erlang clients.
+- `make build/smithy` to generate clients from the OpenRiak model, then sync into each package source tree.
+- Elixir and Erlang codegen use smithy-beam `0.3.1` (`io.github.f34nk.smithy.beam:codegen-elixir` / `codegen-erlang`) from Maven Central.
+
+### Changed
+
+- Packages ship generated OpenRiak HTTP clients instead of placeholders.
+- Package versions: Python and Elixir `0.1.3`, Erlang `0.1.4`.
 
 ## 2026-10-08
 
@@ -14,6 +23,7 @@ All notable changes to this project will be documented here.
 
 - Repository skeleton with placeholder Python (PyPI), Elixir (Hex), and Erlang (Hex) client packages.
 - Tag-triggered release workflow and dry-run publish targets for each package.
+- make clean target to remove build artifacts across all client packages.
 
 ### Fixed
 

@@ -1,17 +1,18 @@
 # openriak_ex
 
-Elixir client for OpenRiak.
+Elixir HTTP client for OpenRiak, generated from the OpenRiak Smithy model.
 
 ```elixir
 def deps do
   [
-    {:openriak_ex, "~> 0.1.0"}
+    {:openriak_ex, "~> 0.1.3"}
   ]
 end
 ```
 
 ```elixir
-client = OpenRiak.OpenRiakClient.new()
+config = %{base_url: "http://127.0.0.1:8098"}
+{:ok, _output} = OpenRiakClient.ping(config, %OpenRiakTypes.PingInput{})
 ```
 
-This package is a placeholder. API surface will grow in later releases.
+Operation functions take a config map and a typed input struct. See `OpenRiakClient` and `OpenRiakTypes` for the full API.

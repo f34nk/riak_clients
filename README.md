@@ -2,6 +2,8 @@
 
 Publishable [OpenRiak](https://github.com/OpenRiak/) HTTP client libraries for Python, Elixir, and Erlang.
 
+Clients are generated from the OpenRiak Smithy model under `model/` and synced into each package source tree.
+
 ## Layout
 
 - `target/python` - PyPI package `openriak`
@@ -12,10 +14,15 @@ Each target keeps its own `VERSION` and publish Makefile target.
 
 ## Local usage
 
+Generate clients, sync into package sources, then build and test:
+
 ```shell
+make build/smithy
 make build
 make test
 ```
+
+`make build` runs Smithy generation and syncs output into each package before compiling.
 
 ## Publishing
 
