@@ -11,11 +11,18 @@ All notable changes to this project will be documented here.
 - Smithy model and per-language codegen plugins for Python, Elixir, and Erlang clients.
 - `make build/smithy` to generate clients from the OpenRiak model, then sync into each package source tree.
 - Elixir and Erlang codegen use smithy-beam `0.3.1` (`io.github.f34nk.smithy.beam:codegen-elixir` / `codegen-erlang`) from Maven Central.
+- Docker Compose stack with an OpenRiak node and Python, Elixir, and Erlang demos that depend on the target client packages.
+- `make demo` orchestration to build, run, and verify the Compose demos.
 
 ### Changed
 
 - Packages ship generated OpenRiak HTTP clients instead of placeholders.
 - Package versions: Python and Elixir `0.1.3`, Erlang `0.1.4`.
+- `make test` and package publish targets use already-synced sources and no longer require Smithy or Java 21 in CI.
+
+### Fixed
+
+- Release CI no longer fails while regenerating clients during publish test jobs.
 
 ## 2026-10-08
 
