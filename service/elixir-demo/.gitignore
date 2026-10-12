@@ -1,0 +1,6 @@
+_build/
+deps/
+*.dump
+/generated/
+/.smithy-beam/
+/build-errors.log
