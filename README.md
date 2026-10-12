@@ -9,20 +9,40 @@ Clients are generated from the OpenRiak Smithy model under `model/` and synced i
 - `target/python` - PyPI package `openriak`
 - `target/elixir` - Hex package `openriak_ex`
 - `target/erlang` - Hex package `openriak_erl`
+- `service/openriak` - OpenRiak node for local demos
+- `service/*-demo` - demos that depend on the target packages
 
 Each target keeps its own `VERSION` and publish Makefile target.
 
+## Docker demos
+
+Run OpenRiak and the Python, Elixir, and Erlang demos (each installs the matching
+`target/` client package and talks to `service/openriak`):
+
+```shell
+docker compose up --build
+```
+
+Demos wait for OpenRiak health, then put/get sample objects and exit. `demo-done`
+succeeds when all three demos complete successfully.
+
 ## Local usage
 
-Generate clients, sync into package sources, then build and test:
+Test and package using the committed package sources:
+
+```shell
+make test
+make publish-dry-run
+```
+
+Regenerate from the Smithy model (requires Java 21 and the Smithy CLI), sync into package sources, then compile:
 
 ```shell
 make build/smithy
 make build
-make test
 ```
 
-`make build` runs Smithy generation and syncs output into each package before compiling.
+`make build` regenerates and syncs before compiling. `make test` and publish targets use already-synced sources and do not require Smithy.
 
 ## Publishing
 
