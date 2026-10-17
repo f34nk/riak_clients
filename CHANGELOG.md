@@ -7,10 +7,11 @@ All notable changes to this project will be documented here.
 ### Added
 
 - Demos and package READMEs exercise both typed and default object put/get.
+- Java client package (`io.github.f34nk:openriak`) with Smithy codegen, HTTP protocol bindings, Maven Central publish targets, and a Compose demo.
 
 ### Changed
 
-- Package versions: Python and Elixir `0.1.4`, Erlang `0.1.5`.
+- Package versions: Python and Elixir `0.1.4`, Erlang `0.1.5`, Java `0.1.0`.
 - Released tags `v0.2.4` and `v0.2.5` covering typed and default object put/get demos, package version bumps, and changelog corrections.
 
 ## 2026-10-12
