@@ -10,36 +10,42 @@ build/smithy:
 	$(MAKE) -C target/python build/smithy
 	$(MAKE) -C target/elixir build/smithy
 	$(MAKE) -C target/erlang build/smithy
+	$(MAKE) -C target/java build/smithy
 
 .PHONY: build
 build:
 	$(MAKE) -C target/python build
 	$(MAKE) -C target/elixir build
 	$(MAKE) -C target/erlang build
+	$(MAKE) -C target/java build
 
 .PHONY: test
 test:
 	$(MAKE) -C target/python test
 	$(MAKE) -C target/elixir test
 	$(MAKE) -C target/erlang test
+	$(MAKE) -C target/java test
 
 .PHONY: dist
 dist:
 	$(MAKE) -C target/python dist
 	$(MAKE) -C target/elixir dist
 	$(MAKE) -C target/erlang dist
+	$(MAKE) -C target/java dist
 
 .PHONY: publish-dry-run
 publish-dry-run:
 	$(MAKE) -C target/python pypi/publish-dry-run
 	$(MAKE) -C target/elixir hex/publish-dry-run
 	$(MAKE) -C target/erlang hex/publish-dry-run
+	$(MAKE) -C target/java maven/publish-dry-run
 
 .PHONY: clean
 clean:
 	$(MAKE) -C target/python clean
 	$(MAKE) -C target/elixir clean
 	$(MAKE) -C target/erlang clean
+	$(MAKE) -C target/java clean
 
 .PHONY: demo
 demo:
@@ -68,7 +74,7 @@ docker/up:
 			echo "Building riak_clients-openriak:demo (this can take several minutes)" | tee compose.log; \
 			DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain docker compose build openriak 2>&1 | tee -a compose.log; \
 		fi; \
-		DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain docker compose build python-demo elixir-demo erlang-demo 2>&1 | tee -a compose.log; \
+		DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain docker compose build python-demo elixir-demo erlang-demo java-demo 2>&1 | tee -a compose.log; \
 		docker compose up -d --no-build 2>&1 | tee -a compose.log'
 	i=0; \
 	while [ $$i -lt 180 ]; do \
