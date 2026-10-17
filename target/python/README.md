@@ -7,11 +7,49 @@ pip install openriak
 ```
 
 ```python
-from openriak import OpenRiak, Config
+import asyncio
+from openriak import Config, OpenRiak
+from openriak.models import (
+    GetDefaultObjectOperationInput,
+    GetObjectInput,
+    PutDefaultObjectOperationInput,
+    PutObjectOperationInput,
+)
 
-client = OpenRiak(Config(endpoint_uri="http://127.0.0.1:8098"))
+async def main():
+    client = OpenRiak(Config(endpoint_uri="http://127.0.0.1:8098"))
+    body = b'{"message":"hello"}'
+
+    # Default bucket path: /buckets/{bucket}/keys/{key}
+    await client.put_default_object(PutDefaultObjectOperationInput(
+        bucket="demo",
+        key="hello",
+        content_type="application/json",
+        w="1",
+        dw="1",
+        body=body,
+    ))
+    default_out = await client.get_default_object(
+        GetDefaultObjectOperationInput(bucket="demo", key="hello")
+    )
+    print(await default_out.body.read())
+
+    # Typed bucket path: /types/{bucketType}/buckets/{bucket}/keys/{key}
+    await client.put_object(PutObjectOperationInput(
+        bucket_type="default",
+        bucket="demo",
+        key="hello-typed",
+        content_type="application/json",
+        w="1",
+        dw="1",
+        body=body,
+    ))
+    typed_out = await client.get_object(
+        GetObjectInput(bucket_type="default", bucket="demo", key="hello-typed")
+    )
+    print(await typed_out.body.read())
+
+asyncio.run(main())
 ```
 
-`OpenRiak` is an async client. Construct it inside a running event loop (or pass a custom transport) before calling operations. See `openriak.client` and `openriak.models` for the full API.
-
-Please checkout the [demos](https://github.com/f34nk/riak_clients/tree/first-draft/service).
+`OpenRiak` is an async client. See `openriak.client` and `openriak.models` for the full API.
