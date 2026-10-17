@@ -15,6 +15,7 @@ jobs:
       python: ${{ steps.filter.outputs.python }}
       elixir: ${{ steps.filter.outputs.elixir }}
       erlang: ${{ steps.filter.outputs.erlang }}
+      java: ${{ steps.filter.outputs.java }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,6 +45,7 @@ jobs:
           check python target/python
           check elixir target/elixir
           check erlang target/erlang
+          check java target/java
 
   publish-python:
     needs: changes
@@ -121,6 +123,41 @@ jobs:
       - name: Publish
         working-directory: target/erlang
         run: make hex/publish
+
+  publish-java:
+    needs: changes
+    if: needs.changes.outputs.java == 'true'
+    runs-on: ubuntu-latest
+    environment: maven
+    permissions:
+      contents: read
+    env:
+      CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+      CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+      - name: Show package version
+        run: echo "Publishing openriak $(cat target/java/VERSION)"
+      - name: Test
+        working-directory: target/java
+        run: make test
+      - name: Publish dry-run
+        working-directory: target/java
+        run: make maven/publish-dry-run
+      - name: Publish
+        working-directory: target/java
+        run: make maven/publish
 
   # NOTE: commented out for now
   # demo:
