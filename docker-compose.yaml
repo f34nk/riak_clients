@@ -55,6 +55,19 @@ services:
       openriak:
         condition: service_healthy
 
+  java-demo:
+    build:
+      context: .
+      dockerfile: service/java-demo/Dockerfile
+    networks:
+      - openriak-net
+    environment:
+      - RIAK_HOST=openriak
+      - RIAK_PORT=8098
+    depends_on:
+      openriak:
+        condition: service_healthy
+
   demo-done:
     image: alpine:3.21
     networks:
@@ -67,6 +80,8 @@ services:
       elixir-demo:
         condition: service_completed_successfully
       erlang-demo:
+        condition: service_completed_successfully
+      java-demo:
         condition: service_completed_successfully
 
 networks:
