@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copy to ~/.m2/settings.xml (or merge the server entry) before publishing.
+
+  Create a Maven Central Portal user token at https://central.sonatype.com/
+  and set CENTRAL_USERNAME / CENTRAL_PASSWORD (token username / token password).
+
+  GPG signing for releases uses the standard maven-gpg-plugin (profile release).
+  Provide a secret key on the machine or via CI (GPG_PRIVATE_KEY / GPG_PASSPHRASE).
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+  <servers>
+    <server>
+      <id>central</id>
+      <username>${env.CENTRAL_USERNAME}</username>
+      <password>${env.CENTRAL_PASSWORD}</password>
+    </server>
+  </servers>
+</settings>
