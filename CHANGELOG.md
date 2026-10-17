@@ -2,20 +2,16 @@
 
 All notable changes to this project will be documented here.
 
-## [Unreleased]
-
 ## 2026-10-17
 
 ### Added
 
-- Release workflow runs `make demo` after publish jobs, including when some publishes were skipped.
-- Release demo job caches the OpenRiak Docker image via Buildx and GitHub Actions cache.
 - Demos and package READMEs exercise both typed and default object put/get.
 
 ### Changed
 
-- `make demo` streams Compose build output, reuses an existing OpenRiak image when present, and no longer deletes that image between runs.
 - Package versions: Python and Elixir `0.1.4`, Erlang `0.1.5`.
+- Released tags `v0.2.4` and `v0.2.5` covering typed and default object put/get demos, package version bumps, and changelog corrections.
 
 ## 2026-10-12
 
@@ -26,18 +22,20 @@ All notable changes to this project will be documented here.
 - Elixir and Erlang codegen use smithy-beam `0.3.1` (`io.github.f34nk.smithy.beam:codegen-elixir` / `codegen-erlang`) from Maven Central.
 - Docker Compose stack with an OpenRiak node and Python, Elixir, and Erlang demos that depend on the target client packages.
 - `make demo` orchestration to build, run, and verify the Compose demos.
+- Release demo job caches the OpenRiak Docker image via Buildx and GitHub Actions cache.
 
 ### Changed
 
 - Packages ship generated OpenRiak HTTP clients instead of placeholders.
 - Package versions: Python and Elixir `0.1.3`, Erlang `0.1.4`.
 - `make test` and package publish targets use already-synced sources and no longer require Smithy or Java 21 in CI.
-- Released tags `v0.2.0` and `v0.2.1` covering Smithy-generated clients, Docker demos, and publish CI fixes.
+- `make demo` streams Compose build output, reuses an existing OpenRiak image when present, and no longer deletes that image between runs.
+- Release workflow no longer runs `make demo` after publish jobs.
+- Released tags `v0.2.0` through `v0.2.3` covering Smithy-generated clients, Docker demos, and publish CI fixes.
 
 ### Fixed
 
 - Release CI no longer fails while regenerating clients during publish test jobs.
-
 
 ## 2026-10-08
 
