@@ -4,14 +4,18 @@ All notable changes to this project will be documented here.
 
 ## [Unreleased]
 
+## 2026-10-17
+
 ### Added
 
 - Release workflow runs `make demo` after publish jobs, including when some publishes were skipped.
 - Release demo job caches the OpenRiak Docker image via Buildx and GitHub Actions cache.
+- Demos and package READMEs exercise both typed and default object put/get.
 
 ### Changed
 
 - `make demo` streams Compose build output, reuses an existing OpenRiak image when present, and no longer deletes that image between runs.
+- Package versions: Python and Elixir `0.1.4`, Erlang `0.1.5`.
 
 ## 2026-10-12
 
