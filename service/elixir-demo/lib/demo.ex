@@ -2,11 +2,15 @@ defmodule Demo do
   @moduledoc false
 
   alias OpenRiakClient
-  alias OpenRiakTypes.PutDefaultObjectOperationInput
   alias OpenRiakTypes.GetDefaultObjectOperationInput
+  alias OpenRiakTypes.GetObjectInput
+  alias OpenRiakTypes.PutDefaultObjectOperationInput
+  alias OpenRiakTypes.PutObjectOperationInput
 
+  @bucket_type "default"
   @bucket "demo"
-  @key "hello-elixir"
+  @default_key "hello-elixir"
+  @typed_key "hello-elixir-typed"
 
   @test_object %{
     "client" => "elixir",
@@ -22,19 +26,26 @@ defmodule Demo do
     IO.puts("=== OpenRiak Elixir Demo ===")
     IO.puts("Using OpenRiak at #{base_url}")
 
-    :ok = write_object(config, @bucket, @key, @test_object)
-    result = read_object(config, @bucket, @key)
+    :ok = write_default_object(config, @bucket, @default_key, @test_object)
+    default_result = read_default_object(config, @bucket, @default_key)
+    IO.puts("Default result: #{Jason.encode!(default_result, pretty: true)}")
+    assert_message!(default_result)
 
-    IO.puts("Result: #{Jason.encode!(result, pretty: true)}")
+    :ok = write_typed_object(config, @bucket_type, @bucket, @typed_key, @test_object)
+    typed_result = read_typed_object(config, @bucket_type, @bucket, @typed_key)
+    IO.puts("Typed result: #{Jason.encode!(typed_result, pretty: true)}")
+    assert_message!(typed_result)
 
+    IO.puts("Demo complete: default and typed write/read verified.")
+  end
+
+  defp assert_message!(result) do
     if result["message"] != @test_object["message"] do
       raise "Value mismatch after read!"
     end
-
-    IO.puts("Demo complete: write and read verified.")
   end
 
-  defp write_object(config, bucket, key, data) do
+  defp write_default_object(config, bucket, key, data) do
     body = Jason.encode!(data)
 
     input = %PutDefaultObjectOperationInput{
@@ -48,18 +59,18 @@ defmodule Demo do
 
     case OpenRiakClient.put_default_object(config, input) do
       {:ok, %{status_code: status}} when status in 200..299 ->
-        IO.puts("Wrote object -> bucket='#{bucket}' key='#{key}' status=#{status}")
+        IO.puts("Wrote default object -> bucket='#{bucket}' key='#{key}' status=#{status}")
         :ok
 
       {:ok, %{status_code: status}} ->
-        raise "put failed with status #{status}"
+        raise "put_default_object failed with status #{status}"
 
       {:error, reason} ->
         raise inspect(reason)
     end
   end
 
-  defp read_object(config, bucket, key) do
+  defp read_default_object(config, bucket, key) do
     input = %GetDefaultObjectOperationInput{
       bucket: bucket,
       key: key
@@ -67,11 +78,63 @@ defmodule Demo do
 
     case OpenRiakClient.get_default_object(config, input) do
       {:ok, %{status_code: 200, body: body}} ->
-        IO.puts("Read object  <- bucket='#{bucket}' key='#{key}' status=200")
+        IO.puts("Read default object  <- bucket='#{bucket}' key='#{key}' status=200")
         Jason.decode!(body)
 
       {:ok, %{status_code: status}} ->
-        raise "get failed with status #{status}"
+        raise "get_default_object failed with status #{status}"
+
+      {:error, reason} ->
+        raise inspect(reason)
+    end
+  end
+
+  defp write_typed_object(config, bucket_type, bucket, key, data) do
+    body = Jason.encode!(data)
+
+    input = %PutObjectOperationInput{
+      bucket_type: bucket_type,
+      bucket: bucket,
+      key: key,
+      w: "1",
+      dw: "1",
+      content_type: "application/json",
+      body: body
+    }
+
+    case OpenRiakClient.put_object(config, input) do
+      {:ok, %{status_code: status}} when status in 200..299 ->
+        IO.puts(
+          "Wrote typed object -> type='#{bucket_type}' bucket='#{bucket}' key='#{key}' status=#{status}"
+        )
+
+        :ok
+
+      {:ok, %{status_code: status}} ->
+        raise "put_object failed with status #{status}"
+
+      {:error, reason} ->
+        raise inspect(reason)
+    end
+  end
+
+  defp read_typed_object(config, bucket_type, bucket, key) do
+    input = %GetObjectInput{
+      bucket_type: bucket_type,
+      bucket: bucket,
+      key: key
+    }
+
+    case OpenRiakClient.get_object(config, input) do
+      {:ok, %{status_code: 200, body: body}} ->
+        IO.puts(
+          "Read typed object  <- type='#{bucket_type}' bucket='#{bucket}' key='#{key}' status=200"
+        )
+
+        Jason.decode!(body)
+
+      {:ok, %{status_code: status}} ->
+        raise "get_object failed with status #{status}"
 
       {:error, reason} ->
         raise inspect(reason)

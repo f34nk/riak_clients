@@ -3,6 +3,7 @@
 
 -include("openriak_types.hrl").
 
+-define(BUCKET_TYPE, <<"default">>).
 -define(BUCKET, <<"demo">>).
 -define(CLIENT, <<"erlang">>).
 -define(QUERY_INDEX, <<"client_bin">>).
@@ -23,11 +24,12 @@ run() ->
 
     ok = ping(Config),
     ok = baseline_kv_demo(Config),
+    ok = typed_kv_demo(Config),
     ok = query_demo(Config),
     ok = lifecycle_demo(Config),
     ok = server_assigned_key_demo(Config),
 
-    io:format("Demo complete: write and read verified.~n"),
+    io:format("Demo complete: default and typed write/read verified.~n"),
     ok.
 
 ping(Config) ->
@@ -44,14 +46,24 @@ baseline_kv_demo(Config) ->
     ok = write_object(Config, ?BUCKET, Key, ?TEST_OBJECT),
     Result = read_object(Config, ?BUCKET, Key),
     Encoded = jsone:encode(Result, [{indent, 2}]),
-    io:format("Result: ~s~n", [Encoded]),
+    io:format("Default result: ~s~n", [Encoded]),
+    assert_message(Result, value_mismatch).
 
+typed_kv_demo(Config) ->
+    Key = unique_key(<<"hello-typed">>),
+    ok = write_typed_object(Config, ?BUCKET_TYPE, ?BUCKET, Key, ?TEST_OBJECT),
+    Result = read_typed_object(Config, ?BUCKET_TYPE, ?BUCKET, Key),
+    Encoded = jsone:encode(Result, [{indent, 2}]),
+    io:format("Typed result: ~s~n", [Encoded]),
+    assert_message(Result, typed_value_mismatch).
+
+assert_message(Result, ErrorTag) ->
     Expected = maps:get(<<"message">>, ?TEST_OBJECT),
     case maps:get(<<"message">>, Result) of
         Expected ->
             ok;
         _ ->
-            error(value_mismatch)
+            error(ErrorTag)
     end.
 
 unique_key(Prefix) ->
@@ -94,10 +106,33 @@ write_object(Config, Bucket, Key, Data, RiakHeaders) ->
     },
     case openriak_client:put_default_object(Config, Input) of
         {ok, #put_default_object_output{status_code = Status}} ->
+            assert_status_range(put_default_object, Status),
+            io:format(
+                "Wrote default object -> bucket='~s' key='~s' status=~p~n",
+                [Bucket, Key, Status]
+            ),
+            ok;
+        {error, Reason} ->
+            error(Reason)
+    end.
+
+write_typed_object(Config, BucketType, Bucket, Key, Data) ->
+    Body = json_body(Data),
+    Input = #put_object_operation_input{
+        bucket_type = BucketType,
+        bucket = Bucket,
+        key = Key,
+        w = <<"1">>,
+        dw = <<"1">>,
+        content_type = <<"application/json">>,
+        body = Body
+    },
+    case openriak_client:put_object(Config, Input) of
+        {ok, #put_object_output{status_code = Status}} ->
             assert_status_range(put_object, Status),
             io:format(
-                "Wrote object -> bucket='~s' key='~s' status=~p~n",
-                [Bucket, Key, Status]
+                "Wrote typed object -> type='~s' bucket='~s' key='~s' status=~p~n",
+                [BucketType, Bucket, Key, Status]
             ),
             ok;
         {error, Reason} ->
@@ -131,12 +166,31 @@ read_object(Config, Bucket, Key) ->
     case openriak_client:get_default_object(Config, Input) of
         {ok, #get_default_object_output{status_code = 200, body = Body}} ->
             io:format(
-                "Read object  <- bucket='~s' key='~s' status=200~n",
+                "Read default object  <- bucket='~s' key='~s' status=200~n",
                 [Bucket, Key]
             ),
             jsone:decode(Body);
         {ok, #get_default_object_output{status_code = Status}} ->
-            error({get_failed, Status});
+            error({get_default_failed, Status});
+        {error, Reason} ->
+            error(Reason)
+    end.
+
+read_typed_object(Config, BucketType, Bucket, Key) ->
+    Input = #get_object_input{
+        bucket_type = BucketType,
+        bucket = Bucket,
+        key = Key
+    },
+    case openriak_client:get_object(Config, Input) of
+        {ok, #get_object_output{status_code = 200, body = Body}} ->
+            io:format(
+                "Read typed object  <- type='~s' bucket='~s' key='~s' status=200~n",
+                [BucketType, Bucket, Key]
+            ),
+            jsone:decode(Body);
+        {ok, #get_object_output{status_code = Status}} ->
+            error({get_object_failed, Status});
         {error, Reason} ->
             error(Reason)
     end.
