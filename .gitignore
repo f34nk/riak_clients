@@ -8,6 +8,8 @@ build/
 **/_build/
 **/codegen/target/
 generated/
+# Maven package build output under target/<lang>/target (not target/<lang> itself)
+target/*/target/
 .smithy-python/
 deps/
 .mix/
