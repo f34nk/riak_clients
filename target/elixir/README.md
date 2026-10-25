@@ -5,7 +5,7 @@ Elixir HTTP client for OpenRiak, generated from the OpenRiak Smithy model.
 ```elixir
 def deps do
   [
-    {:openriak_ex, "~> 0.1.4"}
+    {:openriak_ex, "~> 0.1.5"}
   ]
 end
 ```
@@ -52,3 +52,37 @@ body = ~s({"message":"hello"})
 ```
 
 Operation functions take a config map and a typed input struct. See `OpenRiakClient` and `OpenRiakTypes` for the full API.
+
+## Custom HTTP client
+
+By default the client sends HTTP through `RuntimeHttpClient.Req`. Override the adapter by setting `http_client` on the config map passed into operations.
+
+Implement `@behaviour RuntimeHttpClient`. The request is a `%RuntimeHttpClient.Request{}` (`method`, `url`, `headers`, `body`). Return `{:ok, %RuntimeTypes.HttpResponse{}}` or `{:error, reason}`.
+
+```elixir
+defmodule MyHttpClient do
+  @behaviour RuntimeHttpClient
+
+  alias RuntimeHttpClient.Request
+  alias RuntimeTypes.HttpResponse
+
+  @impl RuntimeHttpClient
+  def request(%Request{method: method, url: url, headers: headers, body: body}) do
+    # call your HTTP stack with method, url, headers, and body
+    {:ok, %HttpResponse{status: 200, headers: [], body: ""}}
+  end
+end
+```
+
+Pass the module in config:
+
+```elixir
+config = %{
+  base_url: "http://127.0.0.1:8098",
+  http_client: MyHttpClient
+}
+
+OpenRiakClient.get_default_object(config, input)
+```
+
+Typical uses: swap in Finch or another HTTP stack, inject mocks in tests, or add tracing and custom TLS around the request.

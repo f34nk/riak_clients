@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented here.
 
+## 2026-10-25
+
+### Added
+
+- Elixir and Erlang package READMEs document pluggable custom HTTP clients.
+
+### Changed
+
+- Package versions: Elixir `0.1.5`, Erlang `0.1.6`.
+
 ## 2026-10-17
 
 ### Added
