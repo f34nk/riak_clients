@@ -6,7 +6,7 @@ All notable changes to this project will be documented here.
 
 ### Changed
 
-- Package versions: Python `0.1.6`, Elixir `0.1.7`, Erlang `0.1.8`, Java `0.1.2`.
+- Package versions: Python `0.1.6`, Elixir `0.1.7`, Erlang `0.1.9`, Java `0.1.2`.
 
 ## 2026-10-25
 

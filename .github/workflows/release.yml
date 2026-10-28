@@ -111,7 +111,7 @@ jobs:
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "26"
-          rebar3-version: "3.24"
+          rebar3-version: "3.28"
       - name: Show package version
         run: echo "Publishing openriak_erl $(cat target/erlang/VERSION)"
       - name: Test

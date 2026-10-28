@@ -4,7 +4,7 @@ Erlang HTTP client for [OpenRiak](https://github.com/OpenRiak), generated from t
 
 ```erlang
 {deps, [
-    {openriak_erl, "0.1.8"}
+    {openriak_erl, "0.1.9"}
 ]}.
 ```
 
