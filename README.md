@@ -8,11 +8,11 @@ Clients are generated from the OpenRiak Smithy model under `model/` and synced i
 
 ## Layout
 
-- [target/python](https://github.com/f34nk/riak_clients/tree/first-draft/target/python) - PyPI package `openriak`
-- [target/elixir](https://github.com/f34nk/riak_clients/tree/first-draft/target/elixir) - Hex package `openriak_ex`
-- [target/erlang](https://github.com/f34nk/riak_clients/tree/first-draft/target/erlang) - Hex package `openriak_erl`
-- [target/java](https://github.com/f34nk/riak_clients/tree/first-draft/target/java) - Maven package `io.github.f34nk:openriak`
-- `service/openriak` - OpenRiak node for local demos
+- [target/python](https://github.com/f34nk/riak_clients/tree/first-draft/target/python) - PyPI package [openriak](https://pypi.org/project/openriak/)
+- [target/elixir](https://github.com/f34nk/riak_clients/tree/first-draft/target/elixir) - Hex package [openriak_ex](https://hex.pm/packages/openriak_ex)
+- [target/erlang](https://github.com/f34nk/riak_clients/tree/first-draft/target/erlang) - Hex package [openriak_erl](https://hex.pm/packages/openriak_erl)
+- [target/java](https://github.com/f34nk/riak_clients/tree/first-draft/target/java) - Maven package [io.github.f34nk:openriak](https://central.sonatype.com/artifact/io.github.f34nk/openriak)
+- [service/openriak](https://github.com/f34nk/riak_clients/tree/first-draft/service/openriak) - OpenRiak running in Docker for local demos
 - `service/*-demo` - demos that depend on the target packages
 
 Each target keeps its own `VERSION` and publish Makefile target.
@@ -20,7 +20,7 @@ Each target keeps its own `VERSION` and publish Makefile target.
 ## Docker demos
 
 Run OpenRiak and the language demos (each installs the matching `target/` client
-package and talks to `service/openriak`):
+package and talks to [service/openriak](https://github.com/f34nk/riak_clients/tree/first-draft/service/openriak)):
 
 ```shell
 docker compose up --build
