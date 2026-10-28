@@ -1,12 +1,12 @@
 # openriak
 
-Java HTTP client for [OpenRiak](https://github.com/OpenRiak), generated from the [OpenRiak Smithy model](https://github.com/f34nk/riak_clients/tree/first-draft/model) using [smithy-beam](https://github.com/f34nk/riak_clients).
+Java HTTP client for [OpenRiak](https://github.com/OpenRiak), generated from the [OpenRiak Smithy model](https://github.com/f34nk/riak_clients) using [smithy-beam](https://github.com/f34nk/smithy-beam).
 
 ```xml
 <dependency>
   <groupId>io.github.f34nk</groupId>
   <artifactId>openriak</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
 </dependency>
 ```
 

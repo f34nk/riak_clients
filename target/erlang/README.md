@@ -1,10 +1,10 @@
 # openriak_erl
 
-Erlang HTTP client for [OpenRiak](https://github.com/OpenRiak), generated from the [OpenRiak Smithy model](https://github.com/f34nk/riak_clients/tree/first-draft/model) using [smithy-beam](https://github.com/f34nk/riak_clients).
+Erlang HTTP client for [OpenRiak](https://github.com/OpenRiak), generated from the [OpenRiak Smithy model](https://github.com/f34nk/riak_clients) using [smithy-beam](https://github.com/f34nk/smithy-beam).
 
 ```erlang
 {deps, [
-    {openriak_erl, "0.1.7"}
+    {openriak_erl, "0.1.8"}
 ]}.
 ```
 
