@@ -1,6 +1,6 @@
 # openriak
 
-Python HTTP client for OpenRiak, generated from the OpenRiak Smithy model.
+Python HTTP client for [OpenRiak](https://github.com/OpenRiak), generated from the [OpenRiak Smithy model](https://github.com/f34nk/riak_clients/tree/first-draft/model) using [smithy-beam](https://github.com/f34nk/riak_clients).
 
 ```shell
 pip install openriak

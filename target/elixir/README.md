@@ -1,11 +1,11 @@
 # openriak_ex
 
-Elixir HTTP client for OpenRiak, generated from the OpenRiak Smithy model.
+Elixir HTTP client for [OpenRiak](https://github.com/OpenRiak), generated from the [OpenRiak Smithy model](https://github.com/f34nk/riak_clients/tree/first-draft/model) using [smithy-beam](https://github.com/f34nk/riak_clients).
 
 ```elixir
 def deps do
   [
-    {:openriak_ex, "~> 0.1.5"}
+    {:openriak_ex, "~> 0.1.6"}
   ]
 end
 ```

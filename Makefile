@@ -3,7 +3,7 @@ SERVICES:=$(foreach x,$(X),$(x)/)
 BUILD_LOGS=build.log
 
 .PHONY: all
-all: build
+all: build/smithy test build
 
 .PHONY: build/smithy
 build/smithy:
